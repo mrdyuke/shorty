@@ -27,16 +27,16 @@ type (
 	}
 
 	Pool struct {
-		MaxIdle        int           `env:"POOL_MAX_IDLE" envDefault:"5"`
+		MaxIdle        int           `env:"POOL_MAX_IDLE"        envDefault:"5"`
 		MaxConnections int           `env:"POOL_MAX_CONNECTIONS" envDefault:"10"`
-		MaxLifetime    time.Duration `env:"POOL_MAX_LIFETIME" envDefault:"5m"`
+		MaxLifetime    time.Duration `env:"POOL_MAX_LIFETIME"    envDefault:"5m"`
 	}
 
 	DataBase struct {
-		Host     string `env:"DATABASE_HOST" envDefault:"localhost"`
-		DBPort   string `env:"DATABASE_PORT" envDefault:"5432"`
-		User     string `env:"DATABASE_USER" envDefault:"postgres"`
-		Name     string `env:"DATABASE_NAME" envDefault:"postgres"`
+		Host     string `env:"DATABASE_HOST"     envDefault:"localhost"`
+		DBPort   string `env:"DATABASE_PORT"     envDefault:"5432"`
+		User     string `env:"DATABASE_USER"     envDefault:"postgres"`
+		Name     string `env:"DATABASE_NAME"     envDefault:"postgres"`
 		Password string `env:"DATABASE_PASSWORD" envDefault:"postgres"`
 	}
 )
