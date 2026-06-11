@@ -6,21 +6,20 @@ import (
 	"net/http"
 	"os/signal"
 	"syscall"
-	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/mrdyuke/shorty/config"
 )
 
-func RunServer(port string, router *gin.Engine) error {
+func RunServer(cfg *config.Config, router http.Handler) error {
 	srv := &http.Server{
-		Addr:    ":" + port,
-		Handler: router.Handler(),
+		Addr:    ":" + cfg.ServerPort,
+		Handler: router,
 
-		ReadHeaderTimeout: 2 * time.Second,
-		ReadTimeout:       5 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       30 * time.Second,
-		MaxHeaderBytes:    1 << 20,
+		ReadHeaderTimeout: cfg.ReadHeaderTimeout,
+		ReadTimeout:       cfg.ReadTimeout,
+		WriteTimeout:      cfg.WriteTimeout,
+		IdleTimeout:       cfg.IdleTimeout,
+		MaxHeaderBytes:    cfg.MaxHeaderBytes,
 	}
 
 	go func() {
@@ -34,7 +33,7 @@ func RunServer(port string, router *gin.Engine) error {
 	<-sigCtx.Done()
 	slog.Info("signal received, shutting down")
 
-	shutdownCtx, stop := context.WithTimeout(context.Background(), 15*time.Second)
+	shutdownCtx, stop := context.WithTimeout(context.Background(), cfg.ServerShutdownTimeout)
 	defer stop()
 	if err := srv.Shutdown(shutdownCtx); err != nil {
 		return err

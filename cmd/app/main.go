@@ -22,15 +22,16 @@ func main() {
 	slog.Info("app config loaded")
 
 	// == router ==
-	if cfg.IsRelease {
+	if !cfg.Debug {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	router := gin.New()
 	router.Use(gin.Recovery())
 	router.Use(gin.Logger())
+	slog.Info("router loaded")
 
 	// == connection pool ==
-	pool, err := pool.NewPostgresPool()
+	pool, err := pool.NewPostgresPool(cfg)
 	if err != nil {
 		slog.Error("pool failed", "error", err)
 		return
@@ -47,9 +48,11 @@ func main() {
 	// == routes ==
 	router.GET("/health", controller.HealthCheck)
 	router.POST("/short", routes.ShortenURL)
+	slog.Info("controllers loaded")
 
 	// == http server ==
-	if err := server.RunServer(cfg.ServerPort, router); err != nil {
+	if err := server.RunServer(cfg, router); err != nil {
 		slog.Error("server failed", "error", err)
+		return
 	}
 }

@@ -1,11 +1,9 @@
 package config
 
 import (
-	"flag"
 	"time"
 
 	"github.com/caarlos0/env/v11"
-	"github.com/joho/godotenv"
 )
 
 type (
@@ -17,44 +15,38 @@ type (
 	}
 
 	App struct {
-		Name      string `env:"APP_NAME"`
-		Version   string `env:"APP_VERSION"`
-		IsRelease bool
+		Name    string `env:"APP_NAME"`
+		Version string `env:"APP_VERSION"`
+		Debug   bool   `env:"APP_DEBUG" envDefault:"false"`
 	}
 
 	Server struct {
-		ServerPort string `env:"SERVER_PORT" envDefault:"8080"`
+		ServerPort            string        `env:"SERVER_PORT" envDefault:"8080"`
+		ServerShutdownTimeout time.Duration `env:"SERVER_SHUTDOWN_TIMEOUT" envDefault:"25s"`
+		ReadHeaderTimeout     time.Duration `env:"SERVER_READ_HEADER_TIMEOUT" envDefault:"2s"`
+		ReadTimeout           time.Duration `env:"SERVER_READ_TIMEOUT"       envDefault:"5s"`
+		WriteTimeout          time.Duration `env:"SERVER_WRITE_TIMEOUT"      envDefault:"10s"`
+		IdleTimeout           time.Duration `env:"SERVER_IDLE_TIMEOUT"       envDefault:"30s"`
+		MaxHeaderBytes        int           `env:"SERVER_MAX_HEADER_BYTES"   envDefault:"1048576"`
 	}
 
 	Pool struct {
-		MaxIdle        int           `env:"POOL_MAX_IDLE"        envDefault:"5"`
-		MaxConnections int           `env:"POOL_MAX_CONNECTIONS" envDefault:"10"`
+		MaxConnections int32         `env:"POOL_MAX_CONNECTIONS" envDefault:"10"`
 		MaxLifetime    time.Duration `env:"POOL_MAX_LIFETIME"    envDefault:"5m"`
 	}
 
 	DataBase struct {
-		Host     string `env:"DATABASE_HOST"     envDefault:"localhost"`
-		DBPort   string `env:"DATABASE_PORT"     envDefault:"5432"`
-		User     string `env:"DATABASE_USER"     envDefault:"postgres"`
-		Name     string `env:"DATABASE_NAME"     envDefault:"postgres"`
-		Password string `env:"DATABASE_PASSWORD" envDefault:"postgres"`
+		DBHost     string `env:"DATABASE_HOST"     envDefault:"localhost"`
+		DBPort     uint16 `env:"DATABASE_PORT"     envDefault:"5432"`
+		DBUser     string `env:"DATABASE_USER"     envDefault:"postgres"`
+		DBName     string `env:"DATABASE_NAME"     envDefault:"postgres"`
+		DBPassword string `env:"DATABASE_PASSWORD" envDefault:"root"`
 	}
 )
 
 func NewConfig() (*Config, error) {
 
 	cfg := new(Config)
-
-	isRelease := flag.Bool("release", false, "")
-	flag.Parse()
-	cfg.IsRelease = *isRelease
-
-	if !cfg.IsRelease {
-		if err := godotenv.Load(".env"); err != nil {
-			return nil, err
-		}
-	}
-
 	if err := env.Parse(cfg); err != nil {
 		return nil, err
 	}

@@ -1,14 +1,16 @@
+# include .env
+# export
+
+.PHONY: run lint build clear
+
 run:
 	go mod tidy
-	go run ./cmd/app/main.go --release
-
-lint:
-	golangci-lint run -c .golangci.yml
+	go run ./cmd/app/main.go
 
 build:
 	go mod tidy
-	go build -o app ./cmd/app/main.go
-	./app --release
+	go build ./cmd/app/main.go
+	./main
 
-clear:
-	rm -f app
+lint:
+	golangci-lint run -c .golangci.yml
