@@ -2,7 +2,7 @@ package domain
 
 import "time"
 
-type URLpack struct {
+type URLPack struct {
 	ID          int
 	OriginalURL string
 	ShortURL    string
